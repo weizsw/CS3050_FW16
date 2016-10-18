@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Topological_test
+PROJECTNAME=Szz63HW3
 
 # Active Configuration
 DEFAULTCONF=Debug

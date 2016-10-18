@@ -1,5 +1,15 @@
-// A C++ program to print topological sorting of a DAG
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
+/* 
+ * File:   main.c
+ * Author: Shaowei Zhou
+ *
+ * Created on 2016年10月17日, 下午2:51
+ */
 #include <list>
 #include <stack>
 #include <fstream>
@@ -161,7 +171,7 @@ int main(int argc, char** argv)
     while(getline(inData, unused)){
         ++numLines;
     }
-    printf("edges number:%d\n", numLines);
+    printf("edges number:%d\n", numLines - 1);
 //    point points[numLines + 100] = {0};
 //    char delim;
 //    int i;
@@ -191,9 +201,12 @@ int main(int argc, char** argv)
         fclose(fp);//Just in case
         exit(PARSING_ERROR_EMPTY_FILE);
     }
+    char term;
     while(!feof(fp)){
         if(fscanf(fp, "(%d,%d)\n", &points[i].x, &points[i].y) != 2){
+            
             exit(INTEGER_IS_NOT_A_VERTEX);
+            
         }
 
         if(points[i].x <= 0 || points[i].x > size || points[i].y <= 0 || points[i].y > size){
@@ -207,25 +220,33 @@ int main(int argc, char** argv)
 
     int vertex = size + 1;
     
-	// Create a graph given in the above diagram
-	Graph g(vertex);
-        
-        for(i = 0; i < 20; i++){
-             g.addEdge(points[i].x,points[i].y);
-        }
-        if(g.isCyclic()){
-        cout << "Graph contains cycle";
-        FILE * wp = fopen(argv[2], "w");
-        fprintf(wp,"0\n");
-        }
-        else{
-        cout << "Graph doesn't contain cycle";
-
-	cout << "Following is a Topological Sort of the given graph \n";
-        
-	g.topologicalSort(argv);
-        } 
     
+    // Create a graph given in the above diagram
+    Graph g(vertex);
 
-	return 0;
+    for(i = 0; i < numLines - 1; i++){
+         g.addEdge(points[i].x,points[i].y);
+    }
+    if(g.isCyclic()){
+    cout << "Graph contains cycle";
+    FILE * wp = fopen(argv[2], "w");
+    if(!wp){
+        exit(FILE_FAILED_TO_OPEN);
+    }
+        fprintf(wp,"0\n");
+    }
+    else{
+    cout << "Graph doesn't contain cycle";
+
+    cout << "Following is a Topological Sort of the given graph \n";
+
+    g.topologicalSort(argv);
+    } 
+    
+    if (fclose(fp) == EOF)//File doesn't close
+    {
+        exit(FILE_FAILED_TO_CLOSE);
+    }
+
+    return 0;
 }

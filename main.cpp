@@ -27,24 +27,24 @@ typedef struct
     int y; 
 } point;
 
-// Class to represent a graph
+// represent a graph
 class Graph
 {
-	int V; // No. of vertices'
+	int V; // the vertex's namount
 
 	// Pointer to an array containing adjacency listsList
 	list<int> *adj;
 
-	// A function used by topologicalSort
+	//used by topologicalSort
 	void topologicalSortUtil(int v, bool visited[], stack<int> &Stack);
         bool isCyclicUtil(int v, bool visited[], bool *rs); 
 public:
 	Graph(int V); // Constructor
 
-	// function to add an edge to graph
+	// add edges to graph
 	void addEdge(int v, int w);
 
-	// prints a Topological Sort of the complete graph
+	// prints the topological sort
 	void topologicalSort(char** argv);
         bool isCyclic();
 };
@@ -59,11 +59,11 @@ bool Graph::isCyclicUtil(int v, bool visited[], bool *recStack)
 {
     if(visited[v] == false)
     {
-        // Mark the current node as visited and part of recursion stack
+        // make visited node and recursion
         visited[v] = true;
         recStack[v] = true;
  
-        // Recur for all the vertices adjacent to this vertex
+        // put all vertex in adj
         list<int>::iterator i;
         for(i = adj[v].begin(); i != adj[v].end(); ++i)
         {
@@ -74,14 +74,13 @@ bool Graph::isCyclicUtil(int v, bool visited[], bool *recStack)
         }
  
     }
-    recStack[v] = false;  // remove the vertex from recursion stack
+    recStack[v] = false;  // clear the vertex
     return false;
 }
 
 bool Graph::isCyclic()
 {
-    // Mark all the vertices as not visited and not part of recursion
-    // stack
+    //same as above
     bool *visited = new bool[V];
     bool *recStack = new bool[V];
     for(int i = 0; i < V; i++)
@@ -90,8 +89,8 @@ bool Graph::isCyclic()
         recStack[i] = false;
     }
  
-    // Call the recursive helper function to detect cycle in different
-    // DFS trees
+    // Call the recursive helper function to determine cycle
+    // DFS trees function
     for(int i = 0; i < V; i++)
         if (isCyclicUtil(i, visited, recStack))
             return true;
@@ -101,44 +100,43 @@ bool Graph::isCyclic()
 
 void Graph::addEdge(int v, int w)
 {
-	adj[v].push_back(w); // Add w to v’s list.
+	adj[v].push_back(w); // Add w to vertex list.
 }
 
 // A recursive function used by topologicalSort
 void Graph::topologicalSortUtil(int v, bool visited[], 
 								stack<int> &Stack)
 {
-	// Mark the current node as visited.
+	// set the current node as visited.
 	visited[v] = true;
 
-	// Recur for all the vertices adjacent to this vertex
+	// Recursion for all the vertices adjacent to this vertex
 	list<int>::iterator i;
 	for (i = adj[v].begin(); i != adj[v].end(); ++i)
 		if (!visited[*i])
 			topologicalSortUtil(*i, visited, Stack);
 
-	// Push current vertex to stack which stores result
+	// push vertex
 	Stack.push(v);
 }
 
-// The function to do Topological Sort. It uses recursive 
-// topologicalSortUtil()
+//  Topological Sort. It is recursive 
 void Graph::topologicalSort(char **argv)
 {
 	stack<int> Stack;
 
-	// Mark all the vertices as not visited
+	// mark all the vertices  not visited
 	bool *visited = new bool[V];
 	for (int i = 0; i < V; i++)
 		visited[i] = false;
 
-	// Call the recursive helper function to store Topological
+	// store Topological
 	// Sort starting from all vertices one by one
 	for (int i = 1; i < V; i++)
 	if (visited[i] == false)
 		topologicalSortUtil(i, visited, Stack);
 
-	// Print contents of stack
+	// Print out and write in file
        
         ofstream file(argv[2]);
 	while (Stack.empty() == false)
@@ -151,7 +149,7 @@ void Graph::topologicalSort(char **argv)
         
 }
 
-// Driver program to test above functions
+// Driver
 int main(int argc, char** argv)
 {   
     if(argc != 3)//Incorrect Command line arguments
@@ -160,17 +158,21 @@ int main(int argc, char** argv)
     }
     int numLines = 0;
     ifstream inData(argv[1]);
+    // open file count lines
     if(!inData){
         exit(FILE_FAILED_TO_OPEN);
     }
+    //check empty file
     if(inData.peek() == std::ifstream::traits_type::eof()){
         inData.close();
         exit(PARSING_ERROR_EMPTY_FILE);
     }
+    //lines count
     string unused;
     while(getline(inData, unused)){
         ++numLines;
     }
+    
     printf("edges number:%d\n", numLines - 1);
 //    point points[numLines + 100] = {0};
 //    char delim;
@@ -185,14 +187,15 @@ int main(int argc, char** argv)
 //    }      
 //    printf("size:%d\n", points[0].size);
 //    
-    
+    //open file error chekc failed to open
     FILE * fp = fopen(argv[1], "r");
     if(!fp){
         exit(FILE_FAILED_TO_OPEN);
     }
     int size = 0;
-    point points[numLines + 100] = {0};
+    point points[numLines + 100];
     int i = 0;
+    //get the size of vertex
     if(fscanf(fp, "%d\n", &size) != 1){
         exit(PARSING_ERROR_INVALID_FORMAT);
     }
@@ -202,6 +205,7 @@ int main(int argc, char** argv)
         exit(PARSING_ERROR_EMPTY_FILE);
     }
     char term;
+    //read every coordinates line by line
     while(!feof(fp)){
         if(fscanf(fp, "(%d,%d)\n", &points[i].x, &points[i].y) != 2){
             
@@ -219,14 +223,13 @@ int main(int argc, char** argv)
     
 
     int vertex = size + 1;
-    
-    
     // Create a graph given in the above diagram
     Graph g(vertex);
-
+    //make graph
     for(i = 0; i < numLines - 1; i++){
          g.addEdge(points[i].x,points[i].y);
     }
+    //cycle check
     if(g.isCyclic()){
     cout << "Graph contains cycle";
     FILE * wp = fopen(argv[2], "w");
@@ -236,13 +239,13 @@ int main(int argc, char** argv)
         fprintf(wp,"0\n");
     }
     else{
-    cout << "Graph doesn't contain cycle";
+    cout << "Graph doesn't contain cycle\n";
 
     cout << "Following is a Topological Sort of the given graph \n";
 
     g.topologicalSort(argv);
     } 
-    
+    //file close
     if (fclose(fp) == EOF)//File doesn't close
     {
         exit(FILE_FAILED_TO_CLOSE);
